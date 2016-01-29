@@ -171,6 +171,12 @@ config.html_js_templates.markups.push 'nghaml'
 ```
 Note: You would still need to use `foo`**`.html`**`.nghaml`
 
+## Contributing
+
+Fork, update, and send a PR. I'm likely to offer you project ownership.
+
+Also note that this project is released with an **enforced** Contributor Code of Conduct.
+
 ## License
 
 MIT License. Copyright 2015 TheOtherZach
