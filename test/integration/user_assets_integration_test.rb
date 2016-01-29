@@ -3,7 +3,7 @@ require 'test_helper'
 # Test the "user" templates in the Dummy app
 
 describe "user assets integration" do
-  let(:config) { Dummy::Application.config.angular_templates }
+  let(:config) { Dummy::Application.config.html_js_templates }
 
   describe "any rendered template" do
 

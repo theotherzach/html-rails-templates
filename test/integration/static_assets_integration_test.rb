@@ -3,7 +3,7 @@ require 'test_helper'
 # Test the Asset the Gem Provides
 
 describe "angular-rails-templates.js integration" do
-  let(:config) { Dummy::Application.config.angular_templates }
+  let(:config) { Dummy::Application.config.html_js_templates }
 
   it "serves angular-rails-templates.js on the pipeline" do
     visit '/assets/angular-rails-templates.js'
@@ -17,11 +17,11 @@ describe "angular-rails-templates.js integration" do
 
   it "includes a comment describing the ignore_prefix" do
     visit '/assets/angular-rails-templates.js'
-    page.source.must_include %Q{// angular_templates.ignore_prefix: #{config.ignore_prefix}}
+    page.source.must_include %Q{// html_js_templates.ignore_prefix: #{config.ignore_prefix}}
   end
 
   it "includes a comment describing the availible markups" do
     visit '/assets/angular-rails-templates.js'
-    page.source.must_include %Q{// angular_templates.markups: #{config.markups}}
+    page.source.must_include %Q{// html_js_templates.markups: #{config.markups}}
   end
 end
