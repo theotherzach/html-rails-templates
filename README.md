@@ -1,8 +1,22 @@
-# Angular Rails Templates [![Build Status](https://secure.travis-ci.org/pitr/angular-rails-templates.png?branch=master)](http://travis-ci.org/pitr/angular-rails-templates)
+Adds HTML templates into the JST global object using Rails asset pipeline.
 
-Adds your HTML templates into Angular's `$templateCache` using Rails asset pipeline.
+in *app/assets/javascripts/my-component/foo.html*
 
-It removes the need for AJAX calls to retrieve the templates (or for you to manually set them into the DOM).
+```html
+<h2>I can be found in <code>app/assets/javascripts/my-component/foo.html</code></h2>
+```
+
+in the JavaScript Console
+
+```javascript
+JST['my-component/foo.html']
+//=> "<h2>I can be found in <code>app/assets/javascripts/my-component/foo.html</code></h2>"
+```
+
+
+## Thank You
+
+This gem is forked from [angular-rails-templates](https://github.com/pitr/angular-rails-templates). Thank you Pitr, Damien Mathieu, and Jeremy Ebler.
 
 ## Usage
 
@@ -11,28 +25,12 @@ It removes the need for AJAX calls to retrieve the templates (or for you to manu
 In Gemfile
 
 ```ruby
-gem 'angular-rails-templates'
+gem 'rails_html_javascript_templates'
 ```
 
-### 2. Include Templates in Rails Asset Pipeline
+### 2. Add HTML files to your JavaScript
 
-Then, in your `application.js` file, require `angular-rails-templates` and your templates:
-
-```javascript
-//= require angularjs
-// ...
-//= require angular-rails-templates
-//
-// Templates in app/assets/javascript/templates
-//= require_tree ./templates
-// OR
-// Templates in app/assets/templates (but see step 5)
-//= require_tree ../templates
-```
-
-Make sure to `require angular-rails-templates` **before** you require your templates.
-
-Name your templates like you would name any other Rails view. **The `.html` part is required.** If it is not present your views will not be added to angular's template cache.
+Name your templates like you would name any other Rails view. **The `.html` part is required.** If it is not present your views will not be added to the 'JST' Object.
 
 ```
 foo.html
@@ -43,7 +41,7 @@ foo.html.slim
 
 Caution: *`.ngslim` and `.nghaml` are no longer supported!*
 
-Angular Rails Templates will try to load support for the following markups if their gems are present:
+Rails HTML Javascript Templates will try to load support for the following markups if their gems are present:
 
 | Extension | Required gem                                             |
 |---------- |----------------------------------------------------------|
@@ -55,15 +53,8 @@ Angular Rails Templates will try to load support for the following markups if th
 
 See [Advanced](#advanced-configuration) if you would like to use other markup languages.
 
-### 3. Add a Dependency in your Angular Application Module
 
-Your Angular module needs to depend on the `templates` module. (configurable, see [Advanced Configuration](#configuration-option-module_name))
-
-```javascript
-angular.module('myApplication', ['templates']);
-```
-
-### 4. Use your Templates
+### 3. Use your Templates
 
 No matter what the source file extension is, your template's url will be  `#{base_name}.html`
 
@@ -79,16 +70,10 @@ The templates can then be accessed via `templateUrl` as expected:
 
 ```javascript
 // Template: app/assets/templates/yourTemplate.html.haml
-{
-  templateUrl: 'yourTemplate.html'
-}
+JST['app/assets/templates/yourTemplate.html'];
+//Returns compiled string template
 ```
 
-Or anything else that uses `$templateCache` or `$templateRequest`
-
-```html
-<div ng-include='"yourTemplate.html"'></div>
-```
 
 ### 5. Avoid name collisions
 
@@ -96,38 +81,38 @@ If you have `app/assets/javascript/user.js` and `app/assets/templates/user.html`
 
 ## Advanced Configuration
 
-Angular Rails Templates has some configuration options that can be set inside `config/application.rb`
+Rails HTML Javascript Templates has some configuration options that can be set inside `config/application.rb`
 
 Here are their default values:
 ```ruby
 # config/application.rb
-config.html_js_templates.module_name    = 'templates'
+config.html_js_templates.namespace    = 'JST'
 config.html_js_templates.ignore_prefix  = %w(templates/)
 config.html_js_templates.inside_paths   = [Rails.root.join('app', 'assets')]
 config.html_js_templates.markups        = %w(erb str haml slim md)
 config.html_js_templates.htmlcompressor = false
 ```
 
-### Configuration Option: `module_name`
+### Configuration Option: `namespace`
 
-This configures the module name that your templates will be placed into.
+This configures the name of the global object that your templates will be placed into.
 It is used to generate javascript like:
 
 ```javascipt
-angular.module("<%= module_name %>")...
+window.<%= namespace %> = window.<%= namespace %> || {}
 ```
 
-Although it is not recommended, you can set `module_name` to the name of your main application module and remove `require angular-rails-templates` from your javascript manifest to have your templates directly injected into your app.
+Which defaults to `JST`
 
 ### Configuration Option: `ignore_prefix`
 
 *If you place your templates in `app/assets/templates` this option is mostly useless.*
 
-`ignore_prefix` will be stripped from the beginning of the `templateUrl` it reports to angularjs.
+`ignore_prefix` will be stripped from the beginning of your template's key on the `JST` object.
 
 Since the default ignore_prefix is [`templates/`], any templates placed under `app/assets/javascripts/templates` will automatically have short names. If your templates are not in this location, you will need to use the full path to the template.
 
-You can set `config.angular_templates.ignore_prefix` to change the default ignore prefix. Default is [`templates/`].
+You can set `config.html_js_templates.ignore_prefix` to change the default ignore prefix. Default is [`templates/`].
 
 
 ``` javascript
@@ -173,51 +158,28 @@ gem "creole"
 gem "tilt-handlebars"
 
 # config/application.rb
-config.angular_templates.markups.push 'asciidoc', 'radius', 'wiki', 'hbs'
+config.html_js_templates.markups.push 'asciidoc', 'radius', 'wiki', 'hbs'
 ```
 If you would like to use a non-standard extension or you would like to use a custom template, you just need to tell Tilt about it.
 
 ```ruby
-# config/initializers/angular_rails_templates.rb
+# config/initializers/rails_html_javascript_templates.rb
 Tilt.register Tilt::HamlTemplate, 'nghaml'
 
 # config/application.rb
-config.angular_templates.markups.push 'nghaml'
+config.html_js_templates.markups.push 'nghaml'
 ```
 Note: You would still need to use `foo`**`.html`**`.nghaml`
 
-
-### Configuration Option: `htmlcompressor`
-
-The [htmlcompressor gem](https://github.com/paolochiodi/htmlcompressor) is in alpha, not activly maintained, and has several known bugs. Beware if you are using windows. The `simple_boolean_attributes` option is known to mangle angular templates. It depends on a three-year-old version of yui-compressor. However, it does a good job of compressing html!
-
-If you would like to use htmlcompressor add it to your Gemfile and Enable the configuration option.
-
-```ruby
-# Gemfile
-gem 'htmlcompressor'
-```
-
-```ruby
-# config/application.rb
-config.angular_templates.htmlcompressor = true
-```
-
-You can also pass an options hash to `htmlcompressor` that will be directly passed to ```HtmlCompressor::Compressor.new```. See the [ruby project](https://github.com/paolochiodi/htmlcompressor#usage) or the [java project](https://code.google.com/p/htmlcompressor/#Compressing_HTML_and_XML_files_from_a_command_line) for descriptions of the options.
-
-```ruby
-# config/application.rb
-config.angular_templates.htmlcompressor = {
-  :remove_quotes => true
-}
-```
-
-
 ## License
 
-MIT License. Copyright 2014 Pitr
+MIT License. Copyright 2015 TheOtherZach
 
-## Authors & contributors
+## Theif
+
+* Zach Briggs
+
+## Original Authors & contributors
 
 * Damien Mathieu <42@dmathieu.com>
 * pitr <pitr.vern@gmail.com>
