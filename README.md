@@ -101,11 +101,11 @@ Angular Rails Templates has some configuration options that can be set inside `c
 Here are their default values:
 ```ruby
 # config/application.rb
-config.angular_templates.module_name    = 'templates'
-config.angular_templates.ignore_prefix  = %w(templates/)
-config.angular_templates.inside_paths   = [Rails.root.join('app', 'assets')]
-config.angular_templates.markups        = %w(erb str haml slim md)
-config.angular_templates.htmlcompressor = false
+config.html_js_templates.module_name    = 'templates'
+config.html_js_templates.ignore_prefix  = %w(templates/)
+config.html_js_templates.inside_paths   = [Rails.root.join('app', 'assets')]
+config.html_js_templates.markups        = %w(erb str haml slim md)
+config.html_js_templates.htmlcompressor = false
 ```
 
 ### Configuration Option: `module_name`

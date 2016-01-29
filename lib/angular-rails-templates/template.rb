@@ -40,7 +40,7 @@ module AngularRailsTemplates
     end
 
     def configuration
-      ::Rails.configuration.angular_templates
+      ::Rails.configuration.html_js_templates
     end
 
     def compress html
