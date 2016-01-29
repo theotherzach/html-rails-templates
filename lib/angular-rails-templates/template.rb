@@ -23,7 +23,7 @@ module AngularRailsTemplates
       locals[:html] = escape_javascript data.chomp
       locals[:angular_template_name] = logical_template_path(scope)
       locals[:source_file] = "#{scope.pathname}".sub(/^#{Rails.root}\//,'')
-      locals[:angular_module] = configuration.module_name
+      locals[:namespace] = configuration.namespace
 
       if @asset_should_be_processed
         AngularJsTemplateWrapper.render(scope, locals)

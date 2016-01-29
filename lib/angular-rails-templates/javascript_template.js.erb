@@ -1,5 +1,5 @@
 // HTML Rails Template
 // source: <%= source_file %>
 
-window.JST = window.JST || {}
-JST['<%= angular_template_name %>'] = <%= html %>
+window.<%= namespace %> = window.<%= namespace %> || {}
+<%= namespace %>['<%= angular_template_name %>'] = <%= html %>

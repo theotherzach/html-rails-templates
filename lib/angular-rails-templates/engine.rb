@@ -3,7 +3,7 @@ require 'tilt'
 module AngularRailsTemplates
   class Engine < ::Rails::Engine
     config.html_js_templates = ActiveSupport::OrderedOptions.new
-    config.html_js_templates.module_name    = 'templates'
+    config.html_js_templates.namespace    = 'templates'
     config.html_js_templates.ignore_prefix  = ['templates/']
     config.html_js_templates.inside_paths   = [] # defined in before_configuration
     config.html_js_templates.markups        = []
